@@ -1,0 +1,28 @@
+language: php
+
+php:
+  - 7.3
+  - 7.4
+
+before_script:
+  - cp .env.travis .env
+  - travis_retry composer self-update
+  - travis_retry composer install --no-interaction
+  - php artisan key:generate
+  - nvm install node
+  - npm install npm@latest -g
+  - npm install
+
+script:
+  - npm run dev
+  - vendor/bin/phpunit --coverage-clover=coverage.xml
+
+after_success:
+# Submit coverage report to https://codecov.io
+- bash <(curl -s https://codecov.io/bash)
+
+# Monitor only these branches
+branches:
+  only:
+  - master
+  - dev
